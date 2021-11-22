@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <title>Lab 9</title>
 
   <style>
@@ -87,10 +88,17 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "93329dca4de9499f906f708dbde5fed5"
+    });
+  </script>
+
   <script>
     class MyError extends Error {
       constructor(message) {
-        this.message = message;
+        super(message);
         this.name = "MyError";
       }
     }
@@ -102,7 +110,24 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } 
+      catch (error) {
+        if(!firstNum || !secondNum){
+          output.innerHTML = 'operands should not be empty'
+          throw new MyError('operands should not be empty')
+        }
+        else{
+          output.innerHTML = 'input should be numbers'
+          throw new MyError('input should be numbers');
+        }
+        
+      } 
+      finally {
+        console.log('error persists, try again')
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
@@ -174,6 +199,14 @@
     errorBtns[14].addEventListener('click', (e)=>{
       throw new Error("Globel error");
     })
+
+    if(window.onerror) {
+      var newError = (errorMessage, url, lineNumber) => {};
+      window.onerror = newError;
+    } 
+    else {
+      window.onerror = reportError;
+    }
   </script>
 
   
